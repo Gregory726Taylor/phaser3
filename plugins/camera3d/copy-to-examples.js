@@ -1,13 +1,24 @@
-var fs = require('fs-extra');
+const fs = require('fs-extra');
 
-var source = './plugins/camera3d/dist/';
-var dest = '../phaser3-examples/public/plugins/';
+const source = './plugins/camera3d/dist/';
+const dest = '../phaser3-examples/public/plugins/';
 
-if (fs.existsSync(dest))
-{
-    fs.copySync(source, dest, { overwrite: true });
+async function copyPlugin() {
+  try {
+    const stats = await fs.stat(dest);
+    if (stats.isDirectory()) {
+      await fs.copy(source, dest, { overwrite: true });
+      console.log('Plugin copied successfully to Phaser 3 Examples.');
+    } else {
+      console.log('Copy-to-Examples failed: Phaser 3 Examples not present at ../phaser3-examples.');
+    }
+  } catch (err) {
+    if (err.code === 'ENOENT') {
+      console.log('Copy-to-Examples failed: Phaser 3 Examples not present at ../phaser3-examples.');
+    } else {
+      console.error('Error occurred while copying plugin:', err);
+    }
+  }
 }
-else
-{
-    console.log('Copy-to-Examples failed: Phaser 3 Examples not present at ../phaser3-examples');
-}
+
+copyPlugin();
