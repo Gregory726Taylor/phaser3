@@ -1,13 +1,14 @@
 /**
  * @author       Richard Davey <rich@photonstorm.com>
- * @copyright    2022 Photon Storm Ltd.
+ * @copyright    2023 Photon Storm Ltd.
  * @license      {@link https://opensource.org/licenses/MIT|MIT License}
  */
 
 /**
- * The End Event.
+ * The Spine animation end event.
  *
  * @event SpinePluginEvents#END
  * @since 3.19.0
  */
-module.exports = 'end';
+
+export const SpineAnimationEndEvent = 'spineAnimationEnd';
