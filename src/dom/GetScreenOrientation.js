@@ -4,7 +4,7 @@
  * @license      {@link https://opensource.org/licenses/MIT|MIT License}
  */
 
-var CONST = require('../scale/const');
+const CONST = require('../scale/const');
 
 /**
  * Attempts to determine the screen orientation using the Orientation API.
@@ -17,19 +17,16 @@ var CONST = require('../scale/const');
  *
  * @return {string} The orientation.
  */
-var GetScreenOrientation = function (width, height)
+const GetScreenOrientation = function (width, height)
 {
-    var screen = window.screen;
-    var orientation = (screen) ? screen.orientation || screen.mozOrientation || screen.msOrientation : false;
+    const screen = window.screen;
+    let orientation = (screen && screen.orientation && screen.orientation.type)
+        || screen.mozOrientation
+        || screen.msOrientation;
 
-    if (orientation && typeof orientation.type === 'string')
+    if (orientation && typeof orientation === 'string')
     {
         //  Screen Orientation API specification
-        return orientation.type;
-    }
-    else if (typeof orientation === 'string')
-    {
-        //  moz / ms-orientation are strings
         return orientation;
     }
 
@@ -37,23 +34,28 @@ var GetScreenOrientation = function (width, height)
     {
         //  Do this check first, as iOS supports this, but also has an incomplete window.screen implementation
         //  This may change by device based on "natural" orientation.
-        return (window.orientation === 0 || window.orientation === 180) ? CONST.ORIENTATION.PORTRAIT : CONST.ORIENTATION.LANDSCAPE;
+        return (window.orientation === 0 || window.orientation === 180)
+            ? CONST.ORIENTATION.PORTRAIT
+            : CONST.ORIENTATION.LANDSCAPE;
     }
-    else if (window.matchMedia)
+
+    if (window.matchMedia)
     {
         if (window.matchMedia('(orientation: portrait)').matches)
         {
             return CONST.ORIENTATION.PORTRAIT;
         }
-        else if (window.matchMedia('(orientation: landscape)').matches)
+
+        if (window.matchMedia('(orientation: landscape)').matches)
         {
             return CONST.ORIENTATION.LANDSCAPE;
         }
     }
-    else
-    {
-        return (height > width) ? CONST.ORIENTATION.PORTRAIT : CONST.ORIENTATION.LANDSCAPE;
-    }
+
+    //  Fallback for when all else fails
+    return (height > width)
+        ? CONST.ORIENTATION.PORTRAIT
+        : CONST.ORIENTATION.LANDSCAPE;
 };
 
 module.exports = GetScreenOrientation;
