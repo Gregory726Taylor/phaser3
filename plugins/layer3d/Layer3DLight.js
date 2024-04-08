@@ -10,26 +10,18 @@ var Vector3 = require('../../math/Vector3');
 
 /**
  * @classdesc
- * A Layer3D Light.
+ * A 3D Layer Light.
  *
  * @class Layer3DLight
  * @memberof Phaser.GameObjects
  * @constructor
  * @since 3.50.0
  */
-var Layer3DLight = new Class({
+class Layer3DLight extends Class {
 
-    initialize:
-
-    function Layer3DLight (layer, x, y, z)
-    {
+    initialize(layer, x, y, z) {
         /**
          * The Layer3D instance this light belongs to.
-         *
-         * A light can only belong to a single Layer3D instance.
-         *
-         * You should consider this property as being read-only. You cannot move a
-         * light to another Layer3D by simply changing it.
          *
          * @name Phaser.GameObjects.Layer3DLight#layer
          * @type {Phaser.GameObjects.Layer3D}
@@ -39,9 +31,6 @@ var Layer3DLight = new Class({
 
         /**
          * The position of the light in 3D space.
-         *
-         * You can modify this vector directly, or use the `x`, `y` and `z`
-         * properties of this class.
          *
          * @name Phaser.GameObjects.Layer3DLight#position
          * @type {Phaser.Math.Vector3}
@@ -54,11 +43,6 @@ var Layer3DLight = new Class({
          *
          * The default ambient color is 1, 1, 1.
          *
-         * You can modify the properties of this RGB object directly, or call
-         * the `setAmbient` method of this class.
-         *
-         * The values in this object are used by the `uLightAmbient` shader uniform.
-         *
          * @name Phaser.GameObjects.Layer3DLight#ambient
          * @type {Phaser.Display.RGB}
          * @since 3.50.0
@@ -70,11 +54,6 @@ var Layer3DLight = new Class({
          *
          * The default diffuse color is 1, 1, 1.
          *
-         * You can modify the properties of this RGB object directly, or call
-         * the `setDiffuse` method of this class.
-         *
-         * The values in this object are used by the `uLightDiffuse` shader uniform.
-         *
          * @name Phaser.GameObjects.Layer3DLight#diffuse
          * @type {Phaser.Display.RGB}
          * @since 3.50.0
@@ -85,11 +64,6 @@ var Layer3DLight = new Class({
          * The specular color of the light.
          *
          * The default specular color is 1, 1, 1.
-         *
-         * You can modify the properties of this RGB object directly, or call
-         * the `setSpecular` method of this class.
-         *
-         * The values in this object are used by the `uLightSpecular` shader uniform.
          *
          * @name Phaser.GameObjects.Layer3DLight#specular
          * @type {Phaser.Display.RGB}
@@ -105,39 +79,31 @@ var Layer3DLight = new Class({
          * @private
          * @since 3.50.0
          */
-        this.dirtyCache = [ 0, 0, 0 ];
-    },
+        this.dirtyCache = [0, 0, 0];
+    }
 
     /**
      * Checks if the position of this light is dirty.
-     *
-     * Called internally by the Mesh Pipeline `onBind` method and if dirty
-     * is used to set the `uLightPosition` uniform.
      *
      * @method Phaser.GameObjects.Layer3DLight#isDirty
      * @since 3.50.0
      *
      * @return {boolean} `true` if this light is dirty, otherwise `false`.
      */
-    isDirty: function ()
-    {
-        var position = this.position;
-        var dirtyCache = this.dirtyCache;
+    isDirty() {
+        const position = this.position;
+        const dirtyCache = this.dirtyCache;
 
-        var x = position.x;
-        var y = position.y;
-        var z = position.z;
-
-        var xCached = dirtyCache[0];
-        var yCached = dirtyCache[1];
-        var zCached = dirtyCache[2];
+        const x = position.x;
+        const y = position.y;
+        const z = position.z;
 
         dirtyCache[0] = x;
         dirtyCache[1] = y;
         dirtyCache[2] = z;
 
-        return (xCached !== x || yCached !== y || zCached !== z);
-    },
+        return (dirtyCache[0] !== x || dirtyCache[1] !== y || dirtyCache[2] !== z);
+    }
 
     /**
      * Sets the position of this light.
@@ -151,12 +117,11 @@ var Layer3DLight = new Class({
      *
      * @return {this} This Layer3DLight instance.
      */
-    setPosition: function (x, y, z)
-    {
+    setPosition(x, y, z) {
         this.position.set(x, y, z);
 
         return this;
-    },
+    }
 
     /**
      * Sets the ambient color of this light.
@@ -170,12 +135,11 @@ var Layer3DLight = new Class({
      *
      * @return {this} This Layer3DLight instance.
      */
-    setAmbient: function (r, g, b)
-    {
+    setAmbient(r, g, b) {
         this.ambient.set(r, g, b);
 
         return this;
-    },
+    }
 
     /**
      * Sets the diffuse color of this light.
@@ -184,112 +148,4 @@ var Layer3DLight = new Class({
      * @since 3.50.0
      *
      * @param {number} r - The red color value. Between 0 and 1.
-     * @param {number} g - The green color value. Between 0 and 1.
-     * @param {number} b - The blue color value. Between 0 and 1.
-     *
-     * @return {this} This Layer3DLight instance.
-     */
-    setDiffuse: function (r, g, b)
-    {
-        this.diffuse.set(r, g, b);
-
-        return this;
-    },
-
-    /**
-     * Sets the specular color of this light.
-     *
-     * @method Phaser.GameObjects.Layer3DLight#setSpecular
-     * @since 3.50.0
-     *
-     * @param {number} r - The red color value. Between 0 and 1.
-     * @param {number} g - The green color value. Between 0 and 1.
-     * @param {number} b - The blue color value. Between 0 and 1.
-     *
-     * @return {this} This Layer3DLight instance.
-     */
-    setSpecular: function (r, g, b)
-    {
-        this.specular.set(r, g, b);
-
-        return this;
-    },
-
-    /**
-     * The x position of the light.
-     *
-     * @name Phaser.GameObjects.Layer3DLight#x
-     * @type {number}
-     * @since 3.50.0
-     */
-    x: {
-
-        get: function ()
-        {
-            return this.position.x;
-        },
-
-        set: function (value)
-        {
-            this.position.x = value;
-        }
-
-    },
-
-    /**
-     * The y position of the light.
-     *
-     * @name Phaser.GameObjects.Layer3DLight#y
-     * @type {number}
-     * @since 3.50.0
-     */
-    y: {
-
-        get: function ()
-        {
-            return this.position.y;
-        },
-
-        set: function (value)
-        {
-            this.position.y = value;
-        }
-
-    },
-
-    /**
-     * The z position of the light.
-     *
-     * @name Phaser.GameObjects.Layer3DLight#z
-     * @type {number}
-     * @since 3.50.0
-     */
-    z: {
-
-        get: function ()
-        {
-            return this.position.z;
-        },
-
-        set: function (value)
-        {
-            this.position.z = value;
-        }
-
-    },
-
-    /**
-     * Destroy handler for this light.
-     *
-     * @method Phaser.GameObjects.Layer3DLight#destroy
-     * @since 3.50.0
-     */
-    destroy: function ()
-    {
-        this.layer = null;
-        this.position = null;
-    }
-
-});
-
-module.exports = Layer3DLight;
+     * @param {number} g - The green color value.
