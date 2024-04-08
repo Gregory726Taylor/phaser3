@@ -4,7 +4,7 @@
  * @license      {@link https://github.com/photonstorm/phaser/blob/master/license.txt|MIT License}
  */
 
-var GetFastValue = require('../../../src/utils/object/GetFastValue');
+const GetFastValue = require('../../../src/utils/object/GetFastValue');
 
 /**
  * @typedef {object} Purchase
@@ -17,16 +17,24 @@ var GetFastValue = require('../../../src/utils/object/GetFastValue');
  * @property {string} [signedRequest] - Server-signed encoding of the purchase request.
  */
 
-var Purchase = function (data)
-{
-    return {
-        developerPayload: GetFastValue(data, 'developerPayload', ''),
-        paymentID: GetFastValue(data, 'paymentID', ''),
-        productID: GetFastValue(data, 'productID', ''),
-        purchaseTime: GetFastValue(data, 'purchaseTime', ''),
-        purchaseToken: GetFastValue(data, 'purchaseToken', ''),
-        signedRequest: GetFastValue(data, 'signedRequest', '')
-    };
+const Purchase = (data = {}) => {
+  const {
+    developerPayload = '',
+    paymentID = '',
+    productID = '',
+    purchaseTime = '',
+    purchaseToken = '',
+    signedRequest = ''
+  } = data;
+
+  return {
+    developerPayload,
+    paymentID,
+    productID,
+    purchaseTime,
+    purchaseToken,
+    signedRequest
+  };
 };
 
 module.exports = Purchase;
