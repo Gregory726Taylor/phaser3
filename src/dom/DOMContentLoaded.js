@@ -8,6 +8,7 @@ var OS = require('../device/OS');
 
 /**
  * @callback ContentLoadedCallback
+ * @param {...*} args - The arguments to pass to the callback function.
  */
 
 /**
@@ -19,9 +20,15 @@ var OS = require('../device/OS');
  * @since 3.0.0
  *
  * @param {ContentLoadedCallback} callback - The callback to be invoked when the device is ready and the DOM content is loaded.
+ * @throws {TypeError} If the `callback` parameter is not a function.
  */
 var DOMContentLoaded = function (callback)
 {
+    if (typeof callback !== 'function')
+    {
+        throw new TypeError('The `callback` parameter must be a function.');
+    }
+
     if (document.readyState === 'complete' || document.readyState === 'interactive')
     {
         callback();
@@ -31,27 +38,8 @@ var DOMContentLoaded = function (callback)
 
     var check = function ()
     {
-        document.removeEventListener('deviceready', check, true);
-        document.removeEventListener('DOMContentLoaded', check, true);
-        window.removeEventListener('load', check, true);
+        if (document.readyState === 'complete' || document.readyState === 'interactive')
+        {
+            document.removeEventListener('deviceready', check, true);
+            document.removeEventListener('DOMContentLoaded', check, true);
 
-        callback();
-    };
-
-    if (!document.body)
-    {
-        window.setTimeout(check, 20);
-    }
-    else if (OS.cordova)
-    {
-        //  Ref. http://docs.phonegap.com/en/3.5.0/cordova_events_events.md.html#deviceready
-        document.addEventListener('deviceready', check, false);
-    }
-    else
-    {
-        document.addEventListener('DOMContentLoaded', check, true);
-        window.addEventListener('load', check, true);
-    }
-};
-
-module.exports = DOMContentLoaded;
