@@ -1,3 +1,18 @@
-**/.*
-build/
-plugins/spine/spine-runtimes/
+# Ignore all files and directories in the root directory
+*
+
+# Except for the build and plugins directories
+!/build/
+!/plugins/
+
+# Within the plugins directory, ignore everything
+/plugins/*
+
+# Except for the spine directory
+!/plugins/spine/
+
+# Within the spine directory, ignore everything
+/plugins/spine/*
+
+# Except for the spine-runtimes directory
+!/plugins/spine/spine-runtimes/
