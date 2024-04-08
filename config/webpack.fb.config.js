@@ -1,19 +1,19 @@
 'use strict';
 
 const webpack = require('webpack');
-const exec = require('child_process').exec;
+const path = require('path');
 
-module.exports = {
+const config = {
     mode: 'development',
 
-    context: `${__dirname}/../src/`,
+    context: path.resolve(__dirname, '../src/'),
 
     entry: {
         phaser: './phaser.js'
     },
 
     output: {
-        path: `${__dirname}/../build/`,
+        path: path.resolve(__dirname, '../build/'),
         filename: 'phaser-facebook-instant-games.js',
         library: 'Phaser',
         libraryTarget: 'umd',
@@ -25,27 +25,38 @@ module.exports = {
 
     performance: { hints: false },
 
+    module: {
+        rules: []
+    },
+
+    resolve: {
+        extensions: ['.js']
+    },
+
     plugins: [
-        new webpack.DefinePlugin({
-            "typeof CANVAS_RENDERER": JSON.stringify(true),
-            "typeof WEBGL_RENDERER": JSON.stringify(true),
-            "typeof EXPERIMENTAL": JSON.stringify(false),
-            "typeof PLUGIN_3D": JSON.stringify(false),
-            "typeof PLUGIN_CAMERA3D": JSON.stringify(false),
-            "typeof PLUGIN_FBINSTANT": JSON.stringify(true),
-            "typeof FEATURE_SOUND": JSON.stringify(true)
-        }),
-        {
-            apply: (compiler) => {
-                compiler.hooks.afterEmit.tap('AfterEmitPlugin', (compilation) => {
-                    exec('node scripts/copy-to-examples-fb.js', (err, stdout, stderr) => {
-                        if (stdout) process.stdout.write(stdout);
-                        if (stderr) process.stderr.write(stderr);
-                    });
-                });
-            }
-        }
+        new webpack.EnvironmentPlugin({
+            CANVAS_RENDERER: true,
+            WEBGL_RENDERER: true,
+            EXPERIMENTAL: false,
+            PLUGIN_3D: false,
+            PLUGIN_CAMERA3D: false,
+            PLUGIN_FBINSTANT: true,
+            FEATURE_SOUND: true
+        })
     ],
 
     devtool: 'source-map'
 };
+
+config.plugins.push({
+    apply: (compiler) => {
+        compiler.hooks.done.tap('AfterEmitPlugin', (stats) => {
+            exec('node scripts/copy-to-examples-fb.js', (err, stdout, stderr) => {
+                if (stdout) process.stdout.write(stdout);
+                if (stderr) process.stderr.write(stderr);
+            });
+        });
+    }
+});
+
+module.exports = config;
