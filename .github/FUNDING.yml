@@ -1,5 +1,7 @@
-# These are supported funding model platforms
+# Supported Funding Model Platforms
+funding_platforms = {
+    "github": "photonstorm",
+    "patreon": "photonstorm",
+    "custom": "https://phaser.io/community/donate"
+}
 
-github: photonstorm
-patreon: photonstorm
-custom: https://phaser.io/community/donate
