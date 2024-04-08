@@ -4,12 +4,8 @@
  * @license      {@link https://github.com/photonstorm/phaser/blob/master/license.txt|MIT License}
  */
 
-var Camera = require('./Camera');
 var Class = require('../../../src/utils/Class');
-var Vector3 = require('../../../src/math/Vector3');
-
-//  Local cache vars
-var tmpVec3 = new Vector3();
+var Vector3 = this.scene.game.math.Vector3;
 
 /**
  * @classdesc
@@ -30,45 +26,13 @@ var PerspectiveCamera = new Class({
 
     Extends: Camera,
 
-    //  FOV is converted to radians automatically
-    initialize:
-
-    function PerspectiveCamera (scene, fieldOfView, viewportWidth, viewportHeight)
+    initialize: function PerspectiveCamera (scene, fieldOfView, viewportWidth, viewportHeight)
     {
-        if (fieldOfView === undefined) { fieldOfView = 80; }
-        if (viewportWidth === undefined) { viewportWidth = 0; }
-        if (viewportHeight === undefined) { viewportHeight = 0; }
-
         Camera.call(this, scene);
 
-        /**
-         * [description]
-         *
-         * @name Phaser.Cameras.Sprite3D.PerspectiveCamera#viewportWidth
-         * @type {integer}
-         * @default 0
-         * @since 3.0.0
-         */
         this.viewportWidth = viewportWidth;
-
-        /**
-         * [description]
-         *
-         * @name Phaser.Cameras.Sprite3D.PerspectiveCamera#viewportHeight
-         * @type {integer}
-         * @default 0
-         * @since 3.0.0
-         */
         this.viewportHeight = viewportHeight;
 
-        /**
-         * [description]
-         *
-         * @name Phaser.Cameras.Sprite3D.PerspectiveCamera#fieldOfView
-         * @type {integer}
-         * @default 80
-         * @since 3.0.0
-         */
         this.fieldOfView = fieldOfView * Math.PI / 180;
 
         this.update();
@@ -82,11 +46,18 @@ var PerspectiveCamera = new Class({
      *
      * @param {number} value - [description]
      *
-     * @return {Phaser.Cameras.Sprite3D.PerspectiveCamera} [description]
+     * @return {PerspectiveCamera} [description]
      */
     setFOV: function (value)
     {
+        if (typeof value !== 'number') {
+            console.warn('PerspectiveCamera: Invalid value for field of view');
+            return this;
+        }
+
         this.fieldOfView = value * Math.PI / 180;
+
+        this.update();
 
         return this;
     },
@@ -97,30 +68,32 @@ var PerspectiveCamera = new Class({
      * @method Phaser.Cameras.Sprite3D.PerspectiveCamera#update
      * @since 3.0.0
      *
-     * @return {Phaser.Cameras.Sprite3D.PerspectiveCamera} [description]
+     * @return {PerspectiveCamera} [description]
      */
     update: function ()
     {
+        if (!this.scene || !this.viewportWidth || !this.viewportHeight || !this.near) {
+            return this;
+        }
+
         var aspect = this.viewportWidth / this.viewportHeight;
 
-        //  Create a perspective matrix for our camera
-        this.projection.perspective(
+        this.setProjection(
             this.fieldOfView,
             aspect,
             Math.abs(this.near),
             Math.abs(this.far)
         );
 
-        //  Build the view matrix
-        tmpVec3.copy(this.position).add(this.direction);
+        var position = this.position;
+        var direction = this.direction;
+        var up = this.up;
 
-        this.view.lookAt(this.position, tmpVec3, this.up);
+        this.setView(position, direction, up);
 
-        //  Projection * view matrix
-        this.combined.copy(this.projection).multiply(this.view);
+        this.setCombined(this.projection, this.view);
 
-        //  Invert combined matrix, used for unproject
-        this.invProjectionView.copy(this.combined).invert();
+        this.setInvProjectionView(this.combined);
 
         this.billboardMatrixDirty = true;
 
@@ -129,6 +102,41 @@ var PerspectiveCamera = new Class({
         return this;
     }
 
+});
+
+Object.defineProperties(PerspectiveCamera.prototype, {
+    projection: {
+        get: function () {
+            return this._projection;
+        },
+        set: function (value) {
+            this._projection = value;
+        }
+    },
+    view: {
+        get: function () {
+            return this._view;
+        },
+        set: function (value) {
+            this._view = value;
+        }
+    },
+    combined: {
+        get: function () {
+            return this._combined;
+        },
+        set: function (value) {
+            this._combined = value;
+        }
+    },
+    invProjectionView: {
+        get: function () {
+            return this._invProjectionView;
+        },
+        set: function (value) {
+            this._invProjectionView = value;
+        }
+    }
 });
 
 module.exports = PerspectiveCamera;
