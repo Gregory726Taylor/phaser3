@@ -4,7 +4,7 @@
  * @license      {@link https://opensource.org/licenses/MIT|MIT License}
  */
 
-var TYPE = require('../TYPE');
+import TYPE from '../TYPE';
 
 /**
  * The Impact Check Against component.
@@ -13,7 +13,7 @@ var TYPE = require('../TYPE');
  * @namespace Phaser.Physics.Impact.Components.CheckAgainst
  * @since 3.0.0
  */
-var CheckAgainst = {
+const CheckAgainst = {
 
     /**
      * [description]
@@ -23,11 +23,11 @@ var CheckAgainst = {
      *
      * @return {Phaser.GameObjects.GameObject} This Game Object.
      */
-    setAvsB: function ()
-    {
+    setAvsB() {
         this.setTypeA();
-
-        return this.setCheckAgainstB();
+        this._setCheckAgainst(TYPE.B);
+        this.body.updateType();
+        return this;
     },
 
     /**
@@ -38,11 +38,11 @@ var CheckAgainst = {
      *
      * @return {Phaser.GameObjects.GameObject} This Game Object.
      */
-    setBvsA: function ()
-    {
+    setBvsA() {
         this.setTypeB();
-
-        return this.setCheckAgainstA();
+        this._setCheckAgainst(TYPE.A);
+        this.body.updateType();
+        return this;
     },
 
     /**
@@ -53,10 +53,8 @@ var CheckAgainst = {
      *
      * @return {Phaser.GameObjects.GameObject} This Game Object.
      */
-    setCheckAgainstNone: function ()
-    {
-        this.body.checkAgainst = TYPE.NONE;
-
+    setCheckAgainstNone() {
+        this._setCheckAgainst(TYPE.NONE);
         return this;
     },
 
@@ -68,10 +66,8 @@ var CheckAgainst = {
      *
      * @return {Phaser.GameObjects.GameObject} This Game Object.
      */
-    setCheckAgainstA: function ()
-    {
-        this.body.checkAgainst = TYPE.A;
-
+    setCheckAgainstA() {
+        this.preferTypeA();
         return this;
     },
 
@@ -83,10 +79,8 @@ var CheckAgainst = {
      *
      * @return {Phaser.GameObjects.GameObject} This Game Object.
      */
-    setCheckAgainstB: function ()
-    {
-        this.body.checkAgainst = TYPE.B;
-
+    setCheckAgainstB() {
+        this.preferTypeB();
         return this;
     },
 
@@ -99,18 +93,12 @@ var CheckAgainst = {
      */
     checkAgainst: {
 
-        get: function ()
-        {
+        get() {
             return this.body.checkAgainst;
         },
 
-        set: function (value)
-        {
-            this.body.checkAgainst = value;
+        set(value: number) {
+            this._setCheckAgainst(value);
         }
 
-    }
-
-};
-
-module.exports = CheckAgainst;
+   
