@@ -8,11 +8,15 @@
  * @namespace Phaser.Cameras.Sprite3D
  */
 
+const Camera = require('./Camera');
+const CameraManager = require('./CameraManager');
+const OrthographicCamera = require('./OrthographicCamera');
+const PerspectiveCamera = require('./PerspectiveCamera');
+
 module.exports = {
-
-    Camera: require('./Camera'),
-    CameraManager: require('./CameraManager'),
-    OrthographicCamera: require('./OrthographicCamera'),
-    PerspectiveCamera: require('./PerspectiveCamera')
-
+  Camera,
+  CameraManager,
+  OrthographicCamera,
+  PerspectiveCamera
 };
+
