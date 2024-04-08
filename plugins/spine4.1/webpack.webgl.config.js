@@ -5,14 +5,17 @@ const exec = require('child_process').exec;
 const RemovePlugin = require('remove-files-webpack-plugin');
 
 module.exports = {
+    target: 'web',
+    node: {
+        global: true,
+        process: true,
+        Buffer: true
+    },
     mode: 'development',
-
     context: `${__dirname}/src/`,
-
     entry: {
         'SpineWebGLPluginDebug': './SpinePlugin.js'
     },
-
     output: {
         path: `${__dirname}/dist/`,
         filename: '[name].js',
@@ -23,13 +26,11 @@ module.exports = {
         devtoolFallbackModuleFilenameTemplate: 'webpack:///[resource-path]?[hash]', // string
         umdNamedDefine: true
     },
-
     performance: { hints: false },
-
     module: {
         rules: [
             {
-                test: require.resolve('./src/runtimes/spine-webgl.js'),
+                test: [require.resolve('./src/runtimes/spine-webgl.js')],
                 loader: 'imports-loader',
                 options: {
                     type: 'commonjs',
@@ -37,7 +38,7 @@ module.exports = {
                 }
             },
             {
-                test: require.resolve('./src/runtimes/spine-webgl.js'),
+                test: [require.resolve('./src/runtimes/spine-webgl.js')],
                 loader: 'exports-loader',
                 options: {
                     type: 'commonjs',
@@ -46,14 +47,12 @@ module.exports = {
             }
         ]
     },
-
     resolve: {
         alias: {
             'SpineCanvas': './runtimes/spine-webgl.js',
             'SpineWebgl': './runtimes/spine-webgl.js'
         },
     },
-
     plugins: [
         new webpack.DefinePlugin({
             "typeof CANVAS_RENDERER": JSON.stringify(false),
@@ -78,6 +77,17 @@ module.exports = {
             }
         }
     ],
-
-    devtool: 'source-map'
+    devtool: 'source-map',
+    devServer: {
+        contentBase: './dist',
+        hot: true
+    },
+    optimization: {
+        minimize: true,
+        minimizer: [
+            new TerserPlugin()
+        ]
+    },
+    bail: true,
+    watch: true
 };
