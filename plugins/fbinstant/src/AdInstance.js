@@ -5,22 +5,29 @@
  */
 
 /**
- * @typedef {object} AdInstance
- *
- * @property {any} instance - Represents an instance of an ad.
- * @property {string} placementID - The Audience Network placement ID of this ad instance.
- * @property {boolean} shown - Has this ad already been shown in-game?
- * @property {boolean} video - Is this a video ad?
+ * Type representing an ad instance.
  */
+interface AdInstance {
+  instance: any;
+  placementID: string;
+  shown: boolean;
+  video: boolean;
+  type: "interstitial" | "rewarded";
+}
 
-var AdInstance = function (placementID, instance, video)
-{
-    return {
-        instance: instance,
-        placementID: placementID,
-        shown: false,
-        video: video
-    };
-};
+/**
+ * Creates a new `AdInstance` object.
+ * @param placementID - The Audience Network placement ID of this ad instance.
+ * @param instance - Represents an instance of an ad.
+ * @param video - Is this a video ad?
+ * @param type - The type of ad (e.g., "interstitial", "rewarded").
+ */
+const AdInstance = (placementID: string, instance: any, video: boolean, type: "interstitial" | "rewarded"): AdInstance => ({
+  instance,
+  placementID,
+  shown: false,
+  video,
+  type,
+});
 
-module.exports = AdInstance;
+export default AdInstance;
