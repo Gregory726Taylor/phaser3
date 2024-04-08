@@ -9,9 +9,9 @@
  * all of those specified in the `compare` object. For example, if the compare object was: `{ scaleX: 0.5, alpha: 1 }`
  * then it would return the first item which had the property `scaleX` set to 0.5 and `alpha` set to 1.
  *
- * To use this with a Group: `GetFirst(group.getChildren(), compare, index)`
+ * To use this with a Group: `getFirst(group.getChildren(), compare, index)`
  *
- * @function Phaser.Actions.GetFirst
+ * @function getFirst
  * @since 3.0.0
  *
  * @generic {Phaser.GameObjects.GameObject[]} G - [items]
@@ -22,31 +22,28 @@
  *
  * @return {?(object|Phaser.GameObjects.GameObject)} The first object in the array that matches the comparison object, or `null` if no match was found.
  */
-var GetFirst = function (items, compare, index)
-{
-    if (index === undefined) { index = 0; }
+function getFirst(items, compare, index = 0) {
+  if (index < 0) {
+    index = Math.max(items.length + index, 0);
+  }
 
-    for (var i = index; i < items.length; i++)
-    {
-        var item = items[i];
+  for (let i = index; i < items.length; i++) {
+    const item = items[i];
+    let match = true;
 
-        var match = true;
-
-        for (var property in compare)
-        {
-            if (item[property] !== compare[property])
-            {
-                match = false;
-            }
-        }
-
-        if (match)
-        {
-            return item;
-        }
+    for (const property in compare) {
+      if (item.hasOwnProperty(property) && item[property] !== compare[property]) {
+        match = false;
+        break;
+      }
     }
 
-    return null;
-};
+    if (match) {
+      return item;
+    }
+  }
 
-module.exports = GetFirst;
+  return null;
+}
+
+module.exports = getFirst;
