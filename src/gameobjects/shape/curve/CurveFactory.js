@@ -4,8 +4,8 @@
  * @license      {@link https://opensource.org/licenses/MIT|MIT License}
  */
 
-var GameObjectFactory = require('../../GameObjectFactory');
-var Curve = require('./Curve');
+const { GameObjectFactory } = require('../../GameObjectFactory');
+const Curve = require('./Curve');
 
 /**
  * Creates a new Curve Shape Game Object and adds it to the Scene.
@@ -27,7 +27,7 @@ var Curve = require('./Curve');
  * that take place during construction. Increase and decrease the default value for smoother, or more
  * jagged, shapes.
  *
- * @method Phaser.GameObjects.GameObjectFactory#curve
+ * @method Phaser.GameObjects.GameObjectFactory#createCurve
  * @since 3.13.0
  *
  * @param {number} [x=0] - The horizontal position of this Game Object in the world.
@@ -38,7 +38,7 @@ var Curve = require('./Curve');
  *
  * @return {Phaser.GameObjects.Curve} The Game Object that was created.
  */
-GameObjectFactory.register('curve', function (x, y, curve, fillColor, fillAlpha)
-{
+GameObjectFactory.register('curve', (x = 0, y = 0, curve, fillColor, fillAlpha) => {
     return this.displayList.add(new Curve(this.scene, x, y, curve, fillColor, fillAlpha));
 });
+
