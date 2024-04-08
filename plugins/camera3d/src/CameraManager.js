@@ -4,30 +4,30 @@
  * @license      {@link https://github.com/photonstorm/phaser/blob/master/license.txt|MIT License}
  */
 
-var Class = require('../../../src/utils/Class');
-var OrthographicCamera = require('./OrthographicCamera');
-var PerspectiveCamera = require('./PerspectiveCamera');
-var PluginCache = require('../../../src/plugins/PluginCache');
+const Class = require('../../../src/utils/Class');
+const OrthographicCamera = require('./OrthographicCamera');
+const PerspectiveCamera = require('./PerspectiveCamera');
+const PluginCache = require('../../../src/plugins/PluginCache');
 
 /**
  * @classdesc
- * [description]
+ * Camera Manager for 3D Sprite Cameras
  *
  * @class CameraManager
  * @memberOf Phaser.Cameras.Sprite3D
+ * @extends Phaser.Class
  * @constructor
  * @since 3.0.0
  *
- * @param {Phaser.Scene} scene - [description]
+ * @param {Phaser.Scene} scene - The Scene to which this Camera Manager belongs.
  */
-var CameraManager = new Class({
+class CameraManager extends Class {
 
-    initialize:
+    constructor(scene) {
+        super();
 
-    function CameraManager (scene)
-    {
         /**
-         * [description]
+         * The Scene to which this Camera Manager belongs.
          *
          * @name Phaser.Cameras.Sprite3D.CameraManager#scene
          * @type {Phaser.Scene}
@@ -36,7 +36,7 @@ var CameraManager = new Class({
         this.scene = scene;
 
         /**
-         * [description]
+         * The Systems associated with this Camera Manager's Scene.
          *
          * @name Phaser.Cameras.Sprite3D.CameraManager#systems
          * @type {Phaser.Scenes.Systems}
@@ -53,9 +53,18 @@ var CameraManager = new Class({
          */
         this.cameras = [];
 
-        scene.sys.events.once('boot', this.boot, this);
-        scene.sys.events.on('start', this.start, this);
-    },
+        /**
+         * The currently active Camera.
+         *
+         * @name Phaser.Cameras.Sprite3D.CameraManager#activeCamera
+         * @type {(Phaser.Cameras.Sprite3D.OrthographicCamera|Phaser.Cameras.Sprite3D.PerspectiveCamera)}
+         * @since 3.0.0
+         */
+        this.activeCamera = null;
+
+        this.systems.events.once('boot', this.boot, this);
+        this.systems.events.on('start', this.start, this);
+    }
 
     /**
      * This method is called automatically, only once, when the Scene is first created.
@@ -65,10 +74,9 @@ var CameraManager = new Class({
      * @private
      * @since 3.5.1
      */
-    boot: function ()
-    {
+    boot() {
         this.systems.events.once('destroy', this.destroy, this);
-    },
+    }
 
     /**
      * This method is called automatically by the Scene when it is starting up.
@@ -79,199 +87,62 @@ var CameraManager = new Class({
      * @private
      * @since 3.5.0
      */
-    start: function ()
-    {
-        var eventEmitter = this.systems.events;
+    start() {
+        const eventEmitter = this.systems.events;
 
         eventEmitter.on('update', this.update, this);
         eventEmitter.once('shutdown', this.shutdown, this);
-    },
+    }
 
     /**
-     * [description]
+     * Add a new Camera to this Camera Manager.
      *
      * @method Phaser.Cameras.Sprite3D.CameraManager#add
      * @since 3.0.0
      *
-     * @param {number} [fieldOfView=80] - [description]
-     * @param {number} [width] - [description]
-     * @param {number} [height] - [description]
+     * @param {number} [fieldOfView=80] - The Field of View for a Perspective Camera.
+     * @param {number} [width] - The width of the Camera.
+     * @param {number} [height] - The height of the Camera.
      *
-     * @return {Phaser.Cameras.Sprite3D.PerspectiveCamera} [description]
+     * @return {(Phaser.Cameras.Sprite3D.OrthographicCamera|Phaser.Cameras.Sprite3D.PerspectiveCamera)} The last added Camera.
      */
-    add: function (fieldOfView, width, height)
-    {
-        return this.addPerspectiveCamera(fieldOfView, width, height);
-    },
+    add(fieldOfView, width, height) {
+        if (fieldOfView !== undefined && width === undefined && height === undefined) {
+            return this.addPerspectiveCamera(fieldOfView);
+        }
+
+        return this.addOrthographicCamera(width, height);
+    }
 
     /**
-     * [description]
+     * Add a new Orthographic Camera to this Camera Manager.
      *
      * @method Phaser.Cameras.Sprite3D.CameraManager#addOrthographicCamera
      * @since 3.0.0
      *
-     * @param {number} width - [description]
-     * @param {number} height - [description]
+     * @param {number} [width] - The width of the Camera.
+     * @param {number} [height] - The height of the Camera.
      *
-     * @return {Phaser.Cameras.Sprite3D.OrthographicCamera} [description]
+     * @return {Phaser.Cameras.Sprite3D.OrthographicCamera} The last added Orthographic Camera.
      */
-    addOrthographicCamera: function (width, height)
-    {
-        var config = this.scene.sys.game.config;
+    addOrthographicCamera(width, height) {
+        const config = this.scene.sys.game.config;
 
         if (width === undefined) { width = config.width; }
         if (height === undefined) { height = config.height; }
 
-        var camera = new OrthographicCamera(this.scene, width, height);
+        const camera = new OrthographicCamera(this.scene, width, height);
 
         this.cameras.push(camera);
 
-        return camera;
-    },
-
-    /**
-     * [description]
-     *
-     * @method Phaser.Cameras.Sprite3D.CameraManager#addPerspectiveCamera
-     * @since 3.0.0
-     *
-     * @param {number} [fieldOfView=80] - [description]
-     * @param {number} [width] - [description]
-     * @param {number} [height] - [description]
-     *
-     * @return {Phaser.Cameras.Sprite3D.PerspectiveCamera} [description]
-     */
-    addPerspectiveCamera: function (fieldOfView, width, height)
-    {
-        var config = this.scene.sys.game.config;
-
-        if (fieldOfView === undefined) { fieldOfView = 80; }
-        if (width === undefined) { width = config.width; }
-        if (height === undefined) { height = config.height; }
-
-        var camera = new PerspectiveCamera(this.scene, fieldOfView, width, height);
-
-        this.cameras.push(camera);
+        if (this.activeCamera === null) {
+            this.setActiveCamera(camera);
+        }
 
         return camera;
-    },
-
-    /**
-     * [description]
-     *
-     * @method Phaser.Cameras.Sprite3D.CameraManager#getCamera
-     * @since 3.0.0
-     *
-     * @param {string} name - [description]
-     *
-     * @return {(Phaser.Cameras.Sprite3D.OrthographicCamera|Phaser.Cameras.Sprite3D.PerspectiveCamera)} [description]
-     */
-    getCamera: function (name)
-    {
-        for (var i = 0; i < this.cameras.length; i++)
-        {
-            if (this.cameras[i].name === name)
-            {
-                return this.cameras[i];
-            }
-        }
-
-        return null;
-    },
-
-    /**
-     * [description]
-     *
-     * @method Phaser.Cameras.Sprite3D.CameraManager#removeCamera
-     * @since 3.0.0
-     *
-     * @param {(Phaser.Cameras.Sprite3D.OrthographicCamera|Phaser.Cameras.Sprite3D.PerspectiveCamera)} camera - [description]
-     */
-    removeCamera: function (camera)
-    {
-        var cameraIndex = this.cameras.indexOf(camera);
-
-        if (cameraIndex !== -1)
-        {
-            this.cameras.splice(cameraIndex, 1);
-        }
-    },
-
-    /**
-     * [description]
-     *
-     * @method Phaser.Cameras.Sprite3D.CameraManager#removeAll
-     * @since 3.0.0
-     *
-     * @return {(Phaser.Cameras.Sprite3D.OrthographicCamera|Phaser.Cameras.Sprite3D.PerspectiveCamera)} [description]
-     */
-    removeAll: function ()
-    {
-        while (this.cameras.length > 0)
-        {
-            var camera = this.cameras.pop();
-
-            camera.destroy();
-        }
-
-        return this.main;
-    },
-
-    /**
-     * [description]
-     *
-     * @method Phaser.Cameras.Sprite3D.CameraManager#update
-     * @since 3.0.0
-     *
-     * @param {number} timestep - [description]
-     * @param {number} delta - [description]
-     */
-    update: function (timestep, delta)
-    {
-        for (var i = 0, l = this.cameras.length; i < l; ++i)
-        {
-            this.cameras[i].update(timestep, delta);
-        }
-    },
-
-    /**
-     * The Scene that owns this plugin is shutting down.
-     * We need to kill and reset all internal properties as well as stop listening to Scene events.
-     *
-     * @method Phaser.Cameras.Sprite3D.CameraManager#shutdown
-     * @private
-     * @since 3.0.0
-     */
-    shutdown: function ()
-    {
-        var eventEmitter = this.systems.events;
-
-        eventEmitter.off('update', this.update, this);
-        eventEmitter.off('shutdown', this.shutdown, this);
-
-        this.removeAll();
-    },
-
-    /**
-     * The Scene that owns this plugin is being destroyed.
-     * We need to shutdown and then kill off all external references.
-     *
-     * @method Phaser.Cameras.Sprite3D.CameraManager#destroy
-     * @private
-     * @since 3.0.0
-     */
-    destroy: function ()
-    {
-        this.shutdown();
-
-        this.scene.sys.events.off('start', this.start, this);
-
-        this.scene = null;
-        this.systems = null;
     }
 
-});
-
-PluginCache.register('CameraManager3D', CameraManager, 'cameras3d');
-
-module.exports = CameraManager;
+    /**
+     * Add a new Perspective Camera to this Camera Manager.
+     *
+     *
