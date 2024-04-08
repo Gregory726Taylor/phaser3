@@ -1,18 +1,36 @@
-src/phaser-esm.js
-src/phaser-arcade-physics.js
-src/animations/config.json
-src/physics/matter-js/lib/
-src/physics/matter-js/poly-decomp/
-src/polyfills/
-src/renderer/webgl/shaders/
-src/geom/polygon/Earcut.js
-src/utils/array/StableSort.js
-src/utils/object/Extend.js
-src/structs/RTree.js
-src/layer3d/
-plugins/spine/dist/
-plugins/spine/src/runtimes/
+src/
+├── phaser-esm.js
+├── phaser-arcade-physics.js
+├── animations
+│   └── config.json
+├── physics
+│   ├── matter-js
+│   │   ├── lib
+│   │   └── poly-decomp
+│   └── RTree.js
+├── renderer
+│   └── webgl
+│       └── shaders
+├── geom
+│   └── polygon
+│       └── Earcut.js
+├── utils
+│   ├── array
+│   │   └── StableSort.js
+│   └── object
+│       └── Extend.js
+└── layer3d
+
+plugins/
+├── spine
+│   ├── dist
+│   └── src
+│       └── runtimes
+└── ...
+
 scripts/
+└── ...
+
 webpack.*
 webpack.config.js
 webpack-nospector.config.js
