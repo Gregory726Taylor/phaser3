@@ -1,10 +1,4 @@
 /**
- * @author       Richard Davey <rich@phaser.io>
- * @copyright    2013-2024 Phaser Studio Inc.
- * @license      {@link https://opensource.org/licenses/MIT|MIT License}
- */
-
-/**
  * The Camera Flash Start Event.
  *
  * This event is dispatched by a Camera instance when the Flash Effect starts.
@@ -12,13 +6,14 @@
  * Listen for it via either of the following:
  *
  * ```js
- * this.cameras.main.on('cameraflashstart', () => {});
+ * this.cameras.main.on('cameraflashstart', (camera: Phaser.Cameras.Scene2D.Camera, effect: Phaser.Cameras.Scene2D.Effects.Flash, duration: number, red: number, green: number, blue: number) => {});
  * ```
  *
  * or use the constant, to avoid having to remember the correct event string:
  *
  * ```js
- * this.cameras.main.on(Phaser.Cameras.Scene2D.Events.FLASH_START, () => {});
+ * import { FLASH_START } from 'phaser-ce/events/Events';
+ * this.cameras.main.on(FLASH_START, (camera: Phaser.Cameras.Scene2D.Camera, effect: Phaser.Cameras.Scene2D.Effects.Flash, duration: number, red: number, green: number, blue: number) => {});
  * ```
  *
  * @event Phaser.Cameras.Scene2D.Events#FLASH_START
@@ -32,4 +27,4 @@
  * @param {number} green - The green color channel value.
  * @param {number} blue - The blue color channel value.
  */
-module.exports = 'cameraflashstart';
+export const FLASH_START = 'cameraflashstart';
