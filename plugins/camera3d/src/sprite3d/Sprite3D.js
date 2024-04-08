@@ -14,7 +14,7 @@ var Vector4 = require('../../../../src/math/Vector4');
  * @classdesc
  * A Sprite 3D Game Object.
  *
- * The Sprite 3D object is an encapsulation of a standard Sprite object, with additional methods to allow
+ * The Sprite3D object is an encapsulation of a standard Sprite object, with additional methods to allow
  * it to be rendered by a 3D Camera. The Sprite can be positioned anywhere within 3D space.
  *
  * @class Sprite3D
@@ -102,10 +102,12 @@ var Sprite3D = new Class({
          * @name Phaser.GameObjects.Sprite3D#_visible
          * @type {boolean}
          * @default true
-         * @private
          * @since 3.0.0
+         * @private
          */
         this._visible = true;
+
+        this.setVisible(value);
     },
 
     /**
@@ -128,7 +130,7 @@ var Sprite3D = new Class({
 
         if (this.scale.x <= 0 || this.scale.y <= 0)
         {
-            gameObject.setVisible(false);
+            this.setVisible(false);
         }
         else
         {
@@ -155,106 +157,4 @@ var Sprite3D = new Class({
      * Set the visible state of the Game Object.
      *
      * @method Phaser.GameObjects.Sprite3D#setVisible
-     * @since 3.0.0
-     *
-     * @param {boolean} value - The visible state of the Game Object.
-     *
-     * @return {Phaser.GameObjects.Sprite3D} This Sprite3D Object.
-     */
-    setVisible: function (value)
-    {
-        this.visible = value;
-
-        return this;
-    },
-
-    /**
-     * The visible state of the Game Object.
-     *
-     * An invisible Game Object will skip rendering, but will still process update logic.
-     *
-     * @name Phaser.GameObjects.Sprite3D#visible
-     * @type {boolean}
-     * @since 3.0.0
-     */
-    visible: {
-
-        get: function ()
-        {
-            return this._visible;
-        },
-
-        set: function (value)
-        {
-            this._visible = value;
-            this.gameObject.visible = value;
-        }
-
-    },
-
-    /**
-     * The x position of this Game Object.
-     *
-     * @name Phaser.GameObjects.Sprite3D#x
-     * @type {number}
-     * @since 3.0.0
-     */
-    x: {
-
-        get: function ()
-        {
-            return this.position.x;
-        },
-
-        set: function (value)
-        {
-            this.position.x = value;
-        }
-
-    },
-
-    /**
-     * The y position of this Game Object.
-     *
-     * @name Phaser.GameObjects.Sprite3D#y
-     * @type {number}
-     * @since 3.0.0
-     */
-    y: {
-
-        get: function ()
-        {
-            return this.position.y;
-        },
-
-        set: function (value)
-        {
-            this.position.y = value;
-        }
-
-    },
-
-    /**
-     * The z position of this Game Object.
-     *
-     * @name Phaser.GameObjects.Sprite3D#z
-     * @type {number}
-     * @since 3.0.0
-     */
-    z: {
-
-        get: function ()
-        {
-            return this.position.z;
-        },
-
-        set: function (value)
-        {
-            this.position.z = value;
-        }
-
-    }
-
-});
-
-module.exports = Sprite3D;
+     * @since
