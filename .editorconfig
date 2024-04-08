@@ -8,5 +8,10 @@ charset = utf-8
 trim_trailing_whitespace = true
 insert_final_newline = true
 
+# Exclude .md files from trimming trailing whitespace
+[*.{py,java,cpp,c,rb,sh,sql,xml,json,yml,properties}]
+trim_trailing_whitespace = true
+
+# Markdown files should maintain existing whitespace
 [*.md]
 trim_trailing_whitespace = false
