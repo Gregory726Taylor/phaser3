@@ -1,17 +1,27 @@
-# https://travis-ci.org/photonstorm/
+# .travis.yml
 
-git:
-  depth: 1
+sudo: required
 
 language: node_js
 
 node_js:
   - '10'
 
-env:
-  - TERM=dumb
+matrix:
+  fast_finish: true
+
+install:
+  - npm install
 
 script:
-  - npm install
   - npm run lint
   - npm run build
+
+branches:
+  only:
+    - master
+
+notifications:
+  email:
+    on_failure: always
+
